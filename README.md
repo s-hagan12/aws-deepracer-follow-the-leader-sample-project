@@ -73,7 +73,7 @@ Open a terminal on the AWS DeepRacer device and run the following commands as th
 
 1. Clone the entire FTL sample project on the AWS DeepRacer device:
  
-        git clone https://github.com/aws-deepracer/aws-deepracer-follow-the-leader-sample-project.git
+        git clone https://github.com/7Gao/aws-deepracer-follow-the-leader-sample-project.git
         cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/
 
 1. Clone the `async_web_server_cpp`, `web_video_server`, and `rplidar_ros dependency` packages on the AWS DeepRacer device:
