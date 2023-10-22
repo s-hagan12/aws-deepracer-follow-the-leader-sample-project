@@ -17,34 +17,13 @@ Follow these steps to install the AWS DeepRacer Follow the Leader (FTL) sample p
 
 ### Prerequisites
 
-The AWS DeepRacer device comes with all the prerequisite packages and libraries installed to run the FTL sample project. For more information about the preinstalled set of packages and libraries on the DeepRacer device, and about installing the required build systems, see [Getting started with AWS DeepRacer OpenSource](https://github.com/aws-deepracer/aws-deepracer-launcher/blob/main/getting-started.md). The FTL sample project requires you to install the AWS DeepRacer application on the device, because it leverages most of the packages from the core application.
+The AWS DeepRacer device comes with all the prerequisite packages and libraries installed to run the FTL sample project.
 
 The following are additional software and hardware requirements for using the FTL sample project on the AWS DeepRacer device. 
 
 1. **Download and optimize the object-detection model:** Follow the [instructions](https://github.com/aws-deepracer/aws-deepracer-follow-the-leader-sample-project/blob/main/download-and-convert-object-detection-model.md) to download and optimize the object-detection model and copy it to the required location on the AWS DeepRacer device.
 
-1. **Calibrate the AWS DeepRacer (optional):** Follow the [instructions](https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-calibrate-vehicle.html) to calibrate the mechanics of your AWS DeepRacer vehicle so the vehicle performance is optimal and it behaves as expected.
-
-1. **Set up the Intel Neural Compute Stick 2 (optional):** The `object_detection_node` provides functionality to offload the inference to a Intel Neural Compute Stick 2 connected to the AWS DeepRacer device. This is an optional setting that enhances the inference performance of the object-detection model. For more details about running inference on the Movidius NCS (Neural Compute Stick) with OpenVINO™ toolkit, see [this video](https://www.youtube.com/watch?v=XPvMrGobe7I).
-
-Attach the Neural Compute Stick 2 firmly in the back slot of the AWS DeepRacer, open a terminal, and run the following commands as the root user to install the dependencies of the Intel Neural Compute Stick 2 on the AWS DeepRacer device.
-
-1. Switch to the root user:
-
-            sudo su
-
-2. Navigate to the OpenVino installation directory:
-
-            cd /opt/intel/openvino_2021/install_dependencies
-
-3. Set the environment variables required to run the Intel OpenVino scripts:
-
-            source /opt/intel/openvino_2021/bin/setupvars.sh
-
-4. Run the dependency installation script for the Intel Neural Compute Stick:
-
-            ./install_NCS_udev_rules.sh
-
+2. **Calibrate the AWS DeepRacer (optional):** Follow the [instructions](https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-calibrate-vehicle.html) to calibrate the mechanics of your AWS DeepRacer vehicle so the vehicle performance is optimal and it behaves as expected.
 
 ## Downloading and building
 
@@ -74,24 +53,26 @@ Open a terminal on the AWS DeepRacer device and run the following commands as th
 1. Clone the entire FTL sample project on the AWS DeepRacer device:
  
         git clone https://github.com/7Gao/aws-deepracer-follow-the-leader-sample-project.git
+
+1. Go to the work space:
+
         cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/
 
 1. Clone the `async_web_server_cpp`, `web_video_server`, and `rplidar_ros dependency` packages on the AWS DeepRacer device:
 
-        cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/ && ./install_dependencies.sh
+        ./install_dependencies.sh
 
-1. Fetch the unreleased dependencies:
+2. Fetch the unreleased dependencies:
 
-        cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/
         rosws update
 
-1. Resolve the dependencies:
+3. Resolve the dependencies:
 
-        cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/ && rosdep install -i --from-path . --rosdistro foxy -y
+        rosdep install -i --from-path . --rosdistro foxy -y
 
-1. Build the packages in the workspace:
+4. Build the packages in the workspace:
 
-        cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/ && colcon build
+        colcon build
 
 
 ## Using the FTL sample application
@@ -104,6 +85,10 @@ To launch the FTL sample application as the root user on the AWS DeepRacer devic
 1. Switch to the root user before you source the ROS 2 installation:
 
         sudo su
+
+1. Stop the `deepracer-core.service` that is currently running on the device:
+
+        systemctl stop deepracer-core
 
 1. Source the ROS 2 Foxy setup bash script:
 
@@ -122,34 +107,6 @@ To launch the FTL sample application as the root user on the AWS DeepRacer devic
         ros2 launch ftl_launcher ftl_launcher.py
 
 Once the FTL sample application is launched, you can follow the steps [here](https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-set-up-vehicle-test-drive.html) to open the AWS DeepRacer Vehicle's Device Console and checkout the FTL mode tab which will help you control the vehicle.
-
-### Enabling `followtheleader` mode using the CLI
-
-Once the `ftl_launcher` has been kicked off, open a new terminal as the root user.
-
-1. Switch to the root user before you source the ROS2 installation:
-
-        sudo su
-
-1. Navigate to the FTL workspace:
-
-        cd ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/
-
-1. Source the ROS 2 Foxy setup bash script:
-
-        source /opt/ros/foxy/setup.bash
-
-1. Source the setup script for the installed packages:
-
-        source ~/deepracer_ws/aws-deepracer-follow-the-leader-sample-project/deepracer_follow_the_leader_ws/install/setup.bash
-
-1. Set the mode of the AWS DeepRacer via `ctrl_pkg` to `followtheleader` using the following ROS 2 service call:
-
-        ros2 service call /ctrl_pkg/vehicle_state deepracer_interfaces_pkg/srv/ActiveStateSrv "{state: 3}"
-
-1. Enable `followtheleader` mode using the following ROS 2 service call:
-
-        ros2 service call /ctrl_pkg/enable_state deepracer_interfaces_pkg/srv/EnableStateSrv "{is_active: True}"
 
 ### Changing the `MAX_SPEED` scale of the AWS DeepRacer:
 
